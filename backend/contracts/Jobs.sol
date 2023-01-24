@@ -29,7 +29,12 @@ contract Jobs {
         uint pricePaid
     );
 
-    function addJob(string calldata _desc) external payable {}
+    function addJob(string calldata _desc) external payable {
+        Job memory job = Job(msg.sender, address(0), _desc, msg.value, false);
+        jobs.push(job);
+
+        emit jobAdded(msg.sender, _desc, msg.value, jobs.length, false);
+    }
 
     function takeJob(uint _id) external {}
 
