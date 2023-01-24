@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-contract Bank {
-
+contract Job {
     struct Account {
         uint balance;
         uint lastDeposit;
@@ -13,14 +12,14 @@ contract Bank {
     event etherDeposited(address indexed account, uint amount);
     event etherWithdrawed(address indexed account, uint amount);
 
-    function getBalanceAndLastDeposit() external view returns(Account memory) {
+    function getBalanceAndLastDeposit() external view returns (Account memory) {
         return accounts[msg.sender];
     }
 
     function withdraw(uint _amount) external {
         // int rest = int(accounts[msg.sender].balance) - int(_amount);
         // require(rest >= 0, "Not enough funds");
-        //OU 
+        //OU
         require(accounts[msg.sender].balance >= _amount, "Not enough funds");
         accounts[msg.sender].balance -= _amount;
         (bool received, ) = msg.sender.call{value: _amount}("");
