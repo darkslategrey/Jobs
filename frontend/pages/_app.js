@@ -9,6 +9,8 @@ import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { goerli, hardhat } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
+import Layout from "@/components/Layout";
+
 export default function App({ Component, pageProps }) {
   const { chains, provider } = configureChains(
     [hardhat, goerli],
@@ -29,7 +31,9 @@ export default function App({ Component, pageProps }) {
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}>
         <ChakraProvider>
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </ChakraProvider>
       </RainbowKitProvider>
     </WagmiConfig>

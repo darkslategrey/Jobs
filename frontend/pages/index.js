@@ -4,18 +4,21 @@ import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
 import { Input, Button, ButtonGroup, FormControl } from "@chakra-ui/react";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useContractEvent, useSigner, useAccount, useBalance, useContract } from 'wagmi'
-import artifact from '@/pages/Bank.json'
-import { ethers, utils, BigNumber, BigNumberish } from 'ethers'
-import Balance from '@/components/Balance'
-import Layout from '@/components/Layout'
-
+import {
+  useContractEvent,
+  useSigner,
+  useAccount,
+  useBalance,
+  useContract,
+} from "wagmi";
+import artifact from "@/pages/Bank.json";
+import { ethers, utils, BigNumber, BigNumberish } from "ethers";
+import JobsList from "@/components/JobsList";
 const inter = Inter({ subsets: ["latin"] });
 
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
-const Logo = () => (<div>the logo</div>)
+const Logo = () => <div>the logo</div>;
 
 // contract.on("etherDeposited", (account, amount) => {}
 // const Balance = ({data}) => {
@@ -28,16 +31,18 @@ const Logo = () => (<div>the logo</div>)
 //   )
 // }
 
-
 export default function Home() {
   const [deposit, setDeposit] = useState(0);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
-  const { address } = useAccount()
+  const { address } = useAccount();
   // const { data, isError, isLoading } = useBalance({address: contractAddress})
   // const [balance, setBalance] = useState(data?.formatted)
-  const { data: signer, isSignerError, isSignerLoading } = useSigner()
-  const contract = useContract({ address: contractAddress, abi: artifact.abi, signerOrProvider: signer })
-
+  const { data: signer, isSignerError, isSignerLoading } = useSigner();
+  const contract = useContract({
+    address: contractAddress,
+    abi: artifact.abi,
+    signerOrProvider: signer,
+  });
 
   //Get All the Events
   //       let filter = {
@@ -53,38 +58,41 @@ export default function Home() {
   useContractEvent({
     address: contractAddress,
     abi: artifact.abi,
-    eventName: 'etherDeposited',
+    eventName: "etherDeposited",
     listener(node, resolver) {
-      console.log('deposit', BigNumber.from(resolver._hex))
+      console.log("deposit", BigNumber.from(resolver._hex));
       // console.log({node, resolver})
     },
-  })
+  });
 
   useContractEvent({
     address: contractAddress,
     abi: artifact.abi,
-    eventName: 'etherWithdrawed',
+    eventName: "etherWithdrawed",
     listener(node, resolver) {
-      console.log('withdrawed', node, resolver)
+      console.log("withdrawed", node, resolver);
     },
-  })
-
+  });
 
   const sendDeposit = async () => {
-    console.log("you deposit", deposit)
-    const transaction = await contract.deposit({ value: ethers.utils.parseEther(deposit) })
-    console.log({ transaction })
-    await transaction.wait(1)
-    document.getElementById('deposit').value = ""
-    setDeposit(0)
-  }
+    console.log("you deposit", deposit);
+    const transaction = await contract.deposit({
+      value: ethers.utils.parseEther(deposit),
+    });
+    console.log({ transaction });
+    await transaction.wait(1);
+    document.getElementById("deposit").value = "";
+    setDeposit(0);
+  };
 
   const withdraw = async () => {
-    const transax = await contract.withdraw(ethers.utils.parseEther(withdrawAmount))
-    transax.wait(1)
-    document.getElementById('withdraw').value = ""
-    setWithdrawAmount(0)
-  }
+    const transax = await contract.withdraw(
+      ethers.utils.parseEther(withdrawAmount)
+    );
+    transax.wait(1);
+    document.getElementById("withdraw").value = "";
+    setWithdrawAmount(0);
+  };
 
   return (
     <>
@@ -94,25 +102,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout>
-        <Logo />
-        <ConnectButton />
-        <div>Bank DAPP</div>
-        <Balance address={contractAddress} />
-        <h2>Deposit</h2>
-        <FormControl >
-          <Input id="deposit" placeholder='Amount' onChange={(e) => setDeposit(e.target.value)} />
-          <Button onClick={sendDeposit}>Deposit</Button>
-        </FormControl>
-        <h2>Withdraw</h2>
-        <FormControl >
-          <Input placeholder='Amount' id="withdraw" onChange={(e) => setWithdrawAmount(e.target.value)} />
-          <Button onClick={withdraw}>Withdraw</Button>
-        </FormControl>
-
-        <h2>Last events</h2>
-
-      </Layout>
+      <JobsList />
     </>
   );
 }
