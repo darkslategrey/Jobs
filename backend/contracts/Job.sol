@@ -1,40 +1,37 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-contract Job {
-    struct Account {
-        uint balance;
-        uint lastDeposit;
+contract Jobs {
+    struct Job {
+        address author;
+        address worker;
+        string description;
+        uint price;
+        bool isFinished;
     }
 
-    mapping(address => Account) accounts;
+    Job[] jobs;
 
-    event etherDeposited(address indexed account, uint amount);
-    event etherWithdrawed(address indexed account, uint amount);
+    event jobAdded(
+        address indexed author,
+        string desc,
+        uint price,
+        uint id,
+        bool isFinished
+    );
 
-    function getBalanceAndLastDeposit() external view returns (Account memory) {
-        return accounts[msg.sender];
-    }
+    event jobTaken(address indexed worker, uint id);
 
-    function withdraw(uint _amount) external {
-        // int rest = int(accounts[msg.sender].balance) - int(_amount);
-        // require(rest >= 0, "Not enough funds");
-        //OU
-        require(accounts[msg.sender].balance >= _amount, "Not enough funds");
-        accounts[msg.sender].balance -= _amount;
-        (bool received, ) = msg.sender.call{value: _amount}("");
-        require(received, "An error occured");
-        emit etherWithdrawed(msg.sender, _amount);
-    }
+    event jobIsFinishedAndPaid(
+        address indexed author,
+        address indexed worker,
+        uint id,
+        uint pricePaid
+    );
 
-    function deposit() external payable {
-        require(msg.value > 0, "Not enough funds deposited");
-        accounts[msg.sender].balance += msg.value;
-        accounts[msg.sender].lastDeposit = block.timestamp;
-        emit etherDeposited(msg.sender, msg.value);
-    }
+    function addJob(string calldata _desc) external payable {}
 
-    fallback() external payable {}
+    function takeJob(uint _id) external {}
 
-    receive() external payable {}
+    function setIsFinishedAndPay(uint _id) external {}
 }
