@@ -8,7 +8,7 @@ import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { goerli, hardhat } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
-
+import ContractProvider from "@/providers/ContractProvider";
 import Layout from "@/components/Layout";
 
 export default function App({ Component, pageProps }) {
@@ -31,9 +31,11 @@ export default function App({ Component, pageProps }) {
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}>
         <ChakraProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <ContractProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ContractProvider>
         </ChakraProvider>
       </RainbowKitProvider>
     </WagmiConfig>

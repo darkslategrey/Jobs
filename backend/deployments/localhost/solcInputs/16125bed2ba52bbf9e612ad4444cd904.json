@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Jobs.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.17;\n\ncontract Jobs {\n    struct Job {\n        address author;\n        address worker;\n        string description;\n        uint price;\n        bool isFinished;\n    }\n\n    Job[] jobs;\n\n    event jobAdded(\n        address indexed author,\n        string desc,\n        uint price,\n        uint id,\n        bool isFinished\n    );\n\n    event jobTaken(address indexed worker, uint id);\n\n    event jobIsFinishedAndPaid(\n        address indexed author,\n        address indexed worker,\n        uint id,\n        uint pricePaid\n    );\n\n    function addJob(string calldata _desc) external payable {\n        Job memory job = Job(msg.sender, address(0), _desc, msg.value, false);\n        jobs.push(job);\n\n        emit jobAdded(msg.sender, _desc, msg.value, jobs.length, false);\n    }\n\n    function takeJob(uint _id) external {}\n\n    function setIsFinishedAndPay(uint _id) external {}\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
