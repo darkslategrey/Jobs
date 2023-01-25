@@ -1,7 +1,5 @@
 import { useState, useContext } from "react";
 import { ethers } from "ethers";
-import { useProvider } from "wagmi";
-import Contract from "../../backend/artifacts/contracts/Jobs.sol/Jobs.json";
 import { contractContext } from "@/providers/ContractProvider";
 
 import {
@@ -16,21 +14,9 @@ import {
 const AddJob = () => {
   const [desc, setDesc] = useState("");
   const [price, setPrice] = useState(null);
-  const contract = useContext(contractContext);
-  // const contractAddr = "0x5fbdb2315678afecb367f032d93f642f64180aa3";
-  // const provider = useProvider();
-  // const provider = new ethers.providers.JsonRpcProvider();
-  // const contract = new ethers.Contract(
-  //   contractAddr,
-  //   Contract.abi,
-  //   provider.getSigner()
-  // );
+  const [_, _contractRead, contractWrite] = useContext(contractContext);
   const addJob = async () => {
-    // const signer = provider.getSigner();
-    // console.log(signer);
-    // console.log(contract);
-    // console.log(provider);
-    await contract.addJob(desc, { value: price });
+    await contractWrite.addJob(desc, { value: price });
   };
 
   return (

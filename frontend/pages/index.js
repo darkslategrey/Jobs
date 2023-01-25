@@ -1,99 +1,9 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "@/styles/Home.module.css";
-import { Input, Button, ButtonGroup, FormControl } from "@chakra-ui/react";
-import {
-  useContractEvent,
-  useSigner,
-  useAccount,
-  useBalance,
-  useContract,
-} from "wagmi";
-import artifact from "@/pages/Bank.json";
-import { ethers, utils, BigNumber, BigNumberish } from "ethers";
 import JobsList from "@/components/JobsList";
-const inter = Inter({ subsets: ["latin"] });
-
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-
-const Logo = () => <div>the logo</div>;
-
-// contract.on("etherDeposited", (account, amount) => {}
-// const Balance = ({data}) => {
-//   useEffect(() => {
-
-//   }, [data])
-
-//   return (
-//     <div>Balance: {data?.formatted} {data?.symbol}</div>
-//   )
-// }
 
 export default function Home() {
-  const [deposit, setDeposit] = useState(0);
-  const [withdrawAmount, setWithdrawAmount] = useState(0);
-  const { address } = useAccount();
-  // const { data, isError, isLoading } = useBalance({address: contractAddress})
-  // const [balance, setBalance] = useState(data?.formatted)
-  const { data: signer, isSignerError, isSignerLoading } = useSigner();
-  const contract = useContract({
-    address: contractAddress,
-    abi: artifact.abi,
-    signerOrProvider: signer,
-  });
-
-  //Get All the Events
-  //       let filter = {
-  //           address: contractAddress,
-  //           fromBlock: 0
-  //       };
-
-  //       let events = await contract.queryFilter(filter)
-
-  // getTransactionReceipt
-  // for await (const event of events) { }
-
-  useContractEvent({
-    address: contractAddress,
-    abi: artifact.abi,
-    eventName: "etherDeposited",
-    listener(node, resolver) {
-      console.log("deposit", BigNumber.from(resolver._hex));
-      // console.log({node, resolver})
-    },
-  });
-
-  useContractEvent({
-    address: contractAddress,
-    abi: artifact.abi,
-    eventName: "etherWithdrawed",
-    listener(node, resolver) {
-      console.log("withdrawed", node, resolver);
-    },
-  });
-
-  const sendDeposit = async () => {
-    console.log("you deposit", deposit);
-    const transaction = await contract.deposit({
-      value: ethers.utils.parseEther(deposit),
-    });
-    console.log({ transaction });
-    await transaction.wait(1);
-    document.getElementById("deposit").value = "";
-    setDeposit(0);
-  };
-
-  const withdraw = async () => {
-    const transax = await contract.withdraw(
-      ethers.utils.parseEther(withdrawAmount)
-    );
-    transax.wait(1);
-    document.getElementById("withdraw").value = "";
-    setWithdrawAmount(0);
-  };
-
   return (
     <>
       <Head>
